@@ -1,0 +1,5 @@
+Compiling nfs-ganesha with FSAL_GLUSTER support:
+-----------------------------------------------
+
+1. You need the libgfapi.so installed. This is a pre-requisite.
+2. You also need the glfs.h which is exported and available for use on installing a standard glusterfs src/bin rpms.
