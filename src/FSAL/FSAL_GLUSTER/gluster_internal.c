@@ -31,13 +31,12 @@
 #include "FSAL/fsal_commonlib.h"
 
 /**
- * @brief FSAL status from Ceph error
+ * @brief FSAL status mapping from GlusterFS errors
  *
  * This function returns a fsal_status_t with the FSAL error as the
- * major, and the posix error as minor.	 (Ceph's error codes are just
- * negative signed versions of POSIX error codes.)
+ * major, and the posix error as minor.	
  *
- * @param[in] ceph_errorcode Ceph error (negative Posix)
+ * @param[in] gluster_errorcode Gluster error
  *
  * @return FSAL status.
  */
@@ -161,7 +160,7 @@ fsal_status_t gluster2fsal_error(const int gluster_errorcode)
 }
 
 /**
- * @brief Convert a struct stat from Ceph to a struct attrlist
+ * @brief Convert a struct stat from Gluster to a struct attrlist
  *
  * This function writes the content of the supplied struct stat to the
  * struct fsalsattr.
@@ -233,7 +232,7 @@ struct fsal_staticfsinfo_t *gluster_staticinfo (struct fsal_module *hdl)
 /**
  * @brief Construct a new filehandle
  *
- * This function constructs a new Ceph FSAL object handle and attaches
+ * This function constructs a new Gluster FSAL object handle and attaches
  * it to the export.  After this call the attributes have been filled
  * in and the handdle is up-to-date and usable.
  *
@@ -338,7 +337,6 @@ cleanup:
 	return ret;
 }
 
-/* FIXME: This needs some analysis on performance, check and use with caution */
 int setids(uid_t nuid, uid_t ngid, uid_t *suid, uid_t *sgid)
 {
 	int rc = 0;
@@ -395,8 +393,18 @@ void latency_dump(void)
 }
 
 
-/*
- * pthread set/getspecific functions for uid/gid key based ops
+/**
+ * @brief pthread set/getspecific functions for uid/gid key based ops
+ * 
+ * The following set of functions setup the uid/gid pthread key structs
+ * for use by gluster apis to set uid/gid for different fops.
+ * Since these are thread-specific, they don't need special locking
+ * primitives right now.
+ *
+ * Following function inits the uid key
+ *
+ * @param[in] none
+ * @param[out] int 
  */
 int
 glfs_uid_keyinit( void )
@@ -411,6 +419,12 @@ glfs_uid_keyinit( void )
 	return rc;
 }
 
+/**
+ * @brief initialize the gid pthread_key struct for use by gluster api
+ *
+ * @param[in] none
+ * @param[out] int
+ */
 int
 glfs_gid_keyinit( void )
 {
@@ -424,6 +438,12 @@ glfs_gid_keyinit( void )
 	return rc;
 }
 
+/**
+ * @brief return the value associated with the uid pthread_key_t struct
+ *
+ * @param[in] void
+ * @param[out] void * ptr to the key value
+ */
 void *glfs_uid_get( void )
 {
 	uid_t *uid = NULL;
@@ -433,6 +453,14 @@ void *glfs_uid_get( void )
 	return uid;  
 }
 
+/**
+ * @brief set a value wrt either the uid or gid pthread_key_t object
+ *
+ * @param[in] pthread_key_t * ptr to the key to be used
+ * @param[in] const void *    ptr to the value to be stored in the key
+ * 
+ * @param[out] int a negative return value indicates the set function failed
+ */
 int glfs_uidgid_set( pthread_key_t *key, const void *val )
 {
 	int rc = -1;
@@ -447,6 +475,12 @@ int glfs_uidgid_set( pthread_key_t *key, const void *val )
 
 }
 
+/**
+ * @brief return the value associated with the gid pthread_key_t struct
+ *
+ * @param[in] void
+ * @param[out] void * ptr to the key value
+ */
 void *glfs_gid_get( void )
 {
 	gid_t *gid = NULL;

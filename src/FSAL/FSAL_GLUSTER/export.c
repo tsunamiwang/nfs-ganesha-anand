@@ -1,7 +1,7 @@
 /*
  * vim:expandtab:shiftwidth=8:tabstop=8:
  *
- * Copyright (C) Red Hat  Inc., 2011
+ * Copyright (C) Red Hat  Inc., 2013
  * Author: Anand Subramanian anands@redhat.com
  *
  * This program is free software; you can redistribute it and/or
@@ -21,8 +21,12 @@
  * ------------- 
  */
 
-/* export.c
- * GLUSTERFS FSAL export object
+/**
+ * @file  export.c
+ * @author Shyamsundar R <srangana@redhat.com>
+ * @author Anand Subramanian <anands@redhat.com>
+ *
+ * @brief GLUSTERFS FSAL export object
  */
 
 #include "config.h"
@@ -46,8 +50,6 @@ static fsal_status_t export_release(struct fsal_export *exp_hdl)
 	fsal_status_t            status = {ERR_FSAL_NO_ERROR, 0};
 	struct glusterfs_export *glfs_export = 
 		container_of(exp_hdl, struct glusterfs_export, export);
-
-	//LogCrit(COMPONENT_FSAL, "called");
 
 	pthread_mutex_lock(&glfs_export->export.lock);
 	if((glfs_export->export.refs > 0) ||
@@ -144,7 +146,6 @@ static fsal_status_t extract_handle(struct fsal_export *exp_hdl,
 	struct timespec          s_time, e_time;
 
 	now(&s_time);
-	//LogCrit(COMPONENT_FSAL, "called");
 
 	/* sanity checks */
 	if( !fh_desc || !fh_desc->addr)
@@ -528,13 +529,13 @@ global_verifier(struct gsh_buffdesc *verf_desc)
 }*/
 
 /**
- *  * @brief Set operations for exports
- *   *
- *    * This function overrides operations that we've implemented, leaving
- *     * the rest for the default.
- *      *
- *       * @param[in,out] ops Operations vector
- *        */
+ * @brief Set operations for exports
+ *
+ * This function overrides operations that we've implemented, leaving
+ * the rest for the default.
+ *
+ * @param[in,out] ops Operations vector
+ */
 
 void export_ops_init(struct export_ops *ops)
 {
@@ -562,11 +563,12 @@ void export_ops_init(struct export_ops *ops)
 
 void handle_ops_init(struct fsal_obj_ops *ops);
 
-/* create_export
- * Create an export point and return a handle to it to be kept
- * in the export list.
- * First lookup the fsal, then create the export and then put the fsal back.
- * returns the export with one reference taken.
+/**
+ * @brief  create_export
+ *         Create an export point and return a handle to it to be kept
+ *         in the export list.
+ *         First lookup the fsal, then create the export and then put
+ *         the fsal back. Returns the export with one reference taken.
  */
 fsal_status_t glusterfs_create_export(struct fsal_module *fsal_hdl,
                                 const char *export_path,
@@ -698,15 +700,6 @@ fsal_status_t glusterfs_create_export(struct fsal_module *fsal_hdl,
 
 	glfsexport->export.fsal = fsal_hdl;
 
-	/* FIXME: Should we optimize root handle holding like CEPH */
-/*        rc = construct_handle(&st, i, myself, &handle);
-        if (rc < 0) {
-                status = ceph2fsal_error(rc);
-                goto error;
-        }
-
-        myself->root = handle;
-*/
 	*pub_export = &glfsexport->export;
 
 	return status;

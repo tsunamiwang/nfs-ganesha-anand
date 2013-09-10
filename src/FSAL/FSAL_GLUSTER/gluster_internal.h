@@ -123,12 +123,13 @@ void latency_update(struct timespec *s_time, struct timespec *e_time,
 void latency_dump(void);
 
 
-/*
- * pthread specific helpers for uid/gid mapping
- */
 pthread_key_t *uid_key;
 pthread_key_t *gid_key;
 
+/**
+ * @brief pthread specific helper functions for uid/gid mapping
+ *        to be used by gluster apis
+ */
 int glfs_uid_keyinit( void );
 int glfs_gid_keyinit( void );
 void *glfs_uid_get( void );
