@@ -344,7 +344,7 @@ if(USE_FSAL_GLUSTER)
     ""
     HAVE_GFAPI
     )
-  check_include_files("glfs.h" HAVE_GLUSTER_H)
+  check_include_files("glusterfs/api/glfs.h" HAVE_GLUSTER_H)
   if((NOT HAVE_GFAPI) OR (NOT HAVE_GLUSTER_H))
     if(STRICT_PACKAGE)
       message(FATAL_ERROR "STRICT PACKAGE: Cannot find GLUSTER GFAPI runtime. Disabling GLUSTER fsal build")

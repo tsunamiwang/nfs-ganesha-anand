@@ -1,7 +1,7 @@
 add_definitions(
   -D__USE_GNU
   -D_GNU_SOURCE
-#  -I/root/shyamgl/glusterfs/api/src
+  -I/usr/include/glusterfs/api/
 )
 
 set( LIB_PREFIX 64)
