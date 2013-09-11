@@ -337,7 +337,7 @@ find_package(Readline)
 # Validate fsal dependencies
 
 if(USE_FSAL_GLUSTER)
-  find_library(GLUSTER_API gfapi)
+  find_library(HAVE_GFAPI gfapi)
   check_library_exists(
     gfapi
     glfs_h_lookupat
